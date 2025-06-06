@@ -1,24 +1,128 @@
 lista_nombres = []
 lista_edades = []
 lista_obras_sociales = []
+lista_tipo_de_consulta = []
+lista_valores_de_consulta = []
+
+obra_social = None
+
+lista_de_tipos_de_consulta_disponibles = ["Consulta médica general", "Consulta psicológica", "Consulta de prevención"]
+valor_consulta_medica_general = 15000
+valor_consulta_psicologica = 20000
+valor_consulta_de_prevencion = 25000
+
+costo_adicional_por_no_tener_obra_social = 10000
 
 lista_de_obras_sociales_disponibles = ["Osde", "Swiss Medical", "Medicus", "Pami", "Dosuba", "Particular"]
 
-
 def mostrar_datos_cargados():
     for i in range(len(lista_nombres)):
+        print("-------------------------")
         print("Nombre:", lista_nombres[i])
         print("Edad:", lista_edades[i])
         print("Obra social:", lista_obras_sociales[i])
-        print("-------------------------")
+        print("Tipo de consulta realizada:", lista_tipo_de_consulta[i])
+        print("Costo de la consulta: $", lista_valores_de_consulta[i])
+
+
+
+def registrar_paciente():
+    registrar_otro_paciente = input("¿Quiere registrar otro paciente? Ingrese sí o no: ")
+
+    if registrar_otro_paciente.capitalize() == "Si" or registrar_otro_paciente.capitalize() == "Sí":
+        main()
+    else:
+        mostrar_datos_cargados()
+        quit()
+
+
+def calcular_costo_de_consulta(obra_social, valor_de_tipo_de_consulta):
+
+    if obra_social == "Particular":
+        valor_de_la_consulta = valor_de_tipo_de_consulta + costo_adicional_por_no_tener_obra_social
+        return valor_de_la_consulta
+    else:
+        valor_de_la_consulta = valor_de_tipo_de_consulta
+        return valor_de_la_consulta
+
+
+def actualizar_datos_del_paciente(nombre, tipo_de_dato_a_actualizar):
+    posicion_de_paciente = lista_nombres.index(nombre)
+                
+    match tipo_de_dato_a_actualizar:
+        case 1:
+            nombre_actualizado = input("Ingrese un nombre para reemplazar al nombre existente: ")
+                        
+            nombre_ya_registrado = False
+
+            for i in range(len(lista_nombres)):
+                if lista_nombres[i] == nombre_actualizado:
+                    nombre_ya_registrado = True
+                    break
+                    
+            while nombre_ya_registrado == True:
+                nombre_ya_registrado = False
+                print("Nombre ya registrado")
+                nombre_actualizado = input("Ingrese un nombre para reemplazar al nombre existente: ")
+                for i in range(len(lista_nombres)):
+                    if lista_nombres[i] == nombre_actualizado:
+                        nombre_ya_registrado = True
+                        break
+                        
+            lista_nombres[posicion_de_paciente] = nombre_actualizado
+            registrar_paciente()
+
+        case 2:
+            edad_actualizada = int(input("Ingrese una edad para reemplazar a la edad existente"))
+
+            while edad_actualizada < 18 or edad_actualizada > 100:
+                print("Edad no válida")
+                edad_actualizada = int(input("Ingrese una edad para reemplazar a la edad existente"))
+
+            lista_edades[posicion_de_paciente] = edad_actualizada
+            registrar_paciente()
+        
+        case 3:
+            obra_social_actualizada = input("Ingrese una obra social para reemplazar a la obra social existente (" + lista_obras_sociales[posicion_de_paciente] + "): ")
+
+            while obra_social_actualizada.capitalize() not in lista_de_obras_sociales_disponibles or obra_social_actualizada.capitalize() == lista_obras_sociales[posicion_de_paciente]:
+                print("La obra social no es válida o es la misma que ya está registrada.")
+                obra_social_actualizada = input("Ingrese una obra social para reemplazar a la obra social existente (" + lista_obras_sociales[posicion_de_paciente] + "): ")
+            
+            lista_obras_sociales[posicion_de_paciente] = obra_social_actualizada.capitalize()
+            registrar_paciente()
+        
+        case 4:
+            tipo_de_consulta_actualizada = input("Ingrese un tipo de consulta para reemplazar al tipo de consulta ya existente (" + lista_tipo_de_consulta[posicion_de_paciente] + "): ")
+
+            while tipo_de_consulta_actualizada.capitalize() not in lista_de_tipos_de_consulta_disponibles or tipo_de_consulta_actualizada.capitalize() == lista_tipo_de_consulta[posicion_de_paciente]:
+                print("El tipo de consulta no es válido o es el mismo que ya esta registrado.")
+                tipo_de_consulta_actualizada = input("Ingrese un tipo de consulta para reemplazar al tipo de consulta ya existente (" + lista_tipo_de_consulta[posicion_de_paciente] + "): ")
+            
+            lista_tipo_de_consulta[posicion_de_paciente] = tipo_de_consulta_actualizada.capitalize()
+            registrar_paciente()
 
 def main():
 
     nombre = input("Ingrese su nombre: ")
-    nombre = nombre.capitalize()
 
     while nombre in lista_nombres:
         print("Nombre ya registrado")
+        actualizar_registro = input("Desea actualizar el registro de este nombre? Indique 'Sí' o 'No': ")
+
+        if actualizar_registro.capitalize() == "Si" or actualizar_registro.capitalize() == "Sí":
+        
+            print("1. Nombre")
+            print("2. Edad")
+            print("3. Obra social")
+            print("4. Tipo de consulta")
+            tipo_de_dato_a_actualizar = int(input("Ingrese el número que coincida con el dato que desea actualizar: "))
+
+            actualizar_datos_del_paciente(nombre, tipo_de_dato_a_actualizar)
+
+        else:
+            quit()
+
         nombre = input("Ingrese su nombre: ")
     
     lista_nombres.append(nombre)
@@ -34,18 +138,37 @@ def main():
     obra_social = input("Ingrese su obra social (Si no tiene, ingrese 'particular'): ")
     obra_social = obra_social.capitalize()
 
-    while obra_social not in lista_de_obras_sociales_disponibles:
+    while obra_social.capitalize() not in lista_de_obras_sociales_disponibles:
         print("Obra social no disponible.")
         obra_social = input("Ingrese su obra social (Si no tiene, ingrese 'particular'): ")
 
     lista_obras_sociales.append(obra_social.capitalize())
 
-    registrar_otro_paciente = input("¿Quiere registrar otro paciente? Ingrese sí o no")
-    
-    if registrar_otro_paciente.capitalize() == "Si" or registrar_otro_paciente.capitalize() == "Sí":
-        main()
-    else:
-        mostrar_datos_cargados()
-        quit()
+
+    valor_de_la_consulta = 0
+
+    print("1. Consulta médica general")
+    print("2. Consulta psicológica")
+    print("3. Consulta de prevención")
+    tipo_de_consulta = int(input("Ingrese el número de algún tipo de consulta mencionada previamente: "))
+
+    match tipo_de_consulta:
+        case 1:
+            lista_tipo_de_consulta.append("Consulta médica general")
+            valor_de_la_consulta = calcular_costo_de_consulta(obra_social, valor_consulta_medica_general)
+            lista_valores_de_consulta.append(valor_de_la_consulta)
+        case 2:
+            lista_tipo_de_consulta.append("Consulta psicológica")
+            valor_de_la_consulta = calcular_costo_de_consulta(obra_social, valor_consulta_psicologica)
+            lista_valores_de_consulta.append(valor_de_la_consulta)
+        case 3:
+            lista_tipo_de_consulta.append("Consulta de prevención")
+            valor_de_la_consulta = calcular_costo_de_consulta(obra_social, valor_consulta_de_prevencion)
+            lista_valores_de_consulta.append(valor_de_la_consulta)
+        
+
+    mostrar_datos_cargados()
+    registrar_paciente()
+
 
 main()
