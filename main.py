@@ -74,12 +74,31 @@ def calcular_costo_de_consulta(obra_social, valor_de_tipo_de_consulta):
     else:
         valor_de_la_consulta = valor_de_tipo_de_consulta
         return valor_de_la_consulta
-    
+
+
+def buscar_y_asociar_tipo_de_consulta(tipo_de_consulta, obra_social):
+    match tipo_de_consulta:
+        case 1:
+            lista_tipo_de_consulta.append("Consulta médica general")
+            valor_de_la_consulta = calcular_costo_de_consulta(obra_social, valor_consulta_medica_general)
+            lista_valores_de_consulta.append(valor_de_la_consulta)
+        case 2:
+            lista_tipo_de_consulta.append("Consulta psicológica")
+            valor_de_la_consulta = calcular_costo_de_consulta(obra_social, valor_consulta_psicologica)
+            lista_valores_de_consulta.append(valor_de_la_consulta)
+        case 3:
+            lista_tipo_de_consulta.append("Consulta de prevención")
+            valor_de_la_consulta = calcular_costo_de_consulta(obra_social, valor_consulta_de_prevencion)
+            lista_valores_de_consulta.append(valor_de_la_consulta)
 
 
 def actualizar_nombre(posicion_de_paciente):
     nombre_actualizado = input("Ingrese un nombre para reemplazar al nombre existente: ")
-                        
+
+    while nombre_actualizado.isdigit():
+        print("El nombre ingresado no es válido. Intente de nuevo.")
+        nombre_actualizado = input("Ingrese un nombre para reemplazar al nombre existente: ")
+
     nombre_ya_registrado = False
 
     for i in range(len(lista_nombres)):
@@ -101,11 +120,21 @@ def actualizar_nombre(posicion_de_paciente):
 
 
 def actualizar_edad(posicion_de_paciente):
-    edad_actualizada = int(input("Ingrese una edad para reemplazar a la edad existente: "))
 
-    while edad_actualizada < 18 or edad_actualizada > 100:
-        print("Edad no válida")
-        edad_actualizada = int(input("Ingrese una edad para reemplazar a la edad existente: "))
+    edad_valida = False
+
+    while edad_valida == False:
+        try:
+            edad_actualizada = int(input("Ingrese una edad para reemplazar a la edad existente: "))
+
+            while edad_actualizada < 18 or edad_actualizada > 100:
+                print("Edad no válida")
+                edad_actualizada = int(input("Ingrese una edad para reemplazar a la edad existente: "))
+
+            edad_valida = True
+            
+        except ValueError:
+            print("El valor ingresado no es válido. Intente de nuevo.")
 
     lista_edades[posicion_de_paciente] = edad_actualizada
     registrar_paciente()
@@ -123,32 +152,35 @@ def actualizar_obra_social(posicion_de_paciente):
 
 
 def actualizar_tipo_de_consulta(posicion_de_paciente):
-    print("1. Consulta médica general")
-    print("2. Consulta psicológica")
-    print("3. Consulta de prevención")
-    numero_de_tipo_de_consulta_actualizada = int(input("Ingrese un tipo de consulta para reemplazar al tipo de consulta ya existente (" + lista_tipo_de_consulta[posicion_de_paciente] + "): "))
+
+    es_el_tipo_de_consulta_valido = False
+
+    while es_el_tipo_de_consulta_valido == False:
+        try:
+            print("1. Consulta médica general")
+            print("2. Consulta psicológica")
+            print("3. Consulta de prevención")
+            numero_de_tipo_de_consulta_actualizada = int(input("Ingrese un tipo de consulta para reemplazar al tipo de consulta ya existente (" + lista_tipo_de_consulta[posicion_de_paciente] + "): "))
+
+            while numero_de_tipo_de_consulta_actualizada < 1 or numero_de_tipo_de_consulta_actualizada > len(lista_de_tipos_de_consulta_disponibles):
+                print("El valor ingresado no es válido.")
+                print("1. Consulta médica general")
+                print("2. Consulta psicológica")
+                print("3. Consulta de prevención")
+                numero_de_tipo_de_consulta_actualizada = int(input("Ingrese un tipo de consulta para reemplazar al tipo de consulta ya existente (" + lista_tipo_de_consulta[posicion_de_paciente] + "): "))
+            
+            es_el_tipo_de_consulta_valido = True
+            
+        except ValueError:
+            print("El valor ingresado no es un un número")
 
     tipo_de_consulta_actualizada = lista_de_tipos_de_consulta_disponibles[numero_de_tipo_de_consulta_actualizada - 1]
-
-    while tipo_de_consulta_actualizada == lista_tipo_de_consulta[posicion_de_paciente]:
-        print("El tipo de consulta no es válido o es el mismo que ya está registrado.")
-        print("1. Consulta médica general")
-        print("2. Consulta psicológica")
-        print("3. Consulta de prevención")
-        numero_de_tipo_de_consulta_actualizada = int(input("Ingrese un tipo de consulta para reemplazar al tipo de consulta ya existente (" + lista_tipo_de_consulta[posicion_de_paciente] + "): "))
-        tipo_de_consulta_actualizada = lista_de_tipos_de_consulta_disponibles[numero_de_tipo_de_consulta_actualizada - 1]
                 
     lista_tipo_de_consulta[posicion_de_paciente] = tipo_de_consulta_actualizada
 
     valor_de_consulta_actualizada = 0
 
-    match tipo_de_consulta_actualizada:
-        case "Consulta médica general":
-            valor_de_consulta_actualizada = calcular_costo_de_consulta(lista_obras_sociales[posicion_de_paciente], valor_consulta_medica_general)
-        case "Consulta psicológica":
-            valor_de_consulta_actualizada = calcular_costo_de_consulta(lista_obras_sociales[posicion_de_paciente], valor_consulta_psicologica)
-        case "Consulta de prevención":
-            valor_de_consulta_actualizada = calcular_costo_de_consulta(lista_obras_sociales[posicion_de_paciente], valor_consulta_de_prevencion)
+    buscar_y_asociar_tipo_de_consulta(numero_de_tipo_de_consulta_actualizada, lista_obras_sociales[posicion_de_paciente])
 
     lista_valores_de_consulta[posicion_de_paciente] = valor_de_consulta_actualizada
     registrar_paciente()
@@ -171,10 +203,13 @@ def actualizar_datos_del_paciente(nombre, tipo_de_dato_a_actualizar):
             actualizar_tipo_de_consulta(posicion_de_paciente)
 
 
-
 def main():
 
     nombre = input("Ingrese su nombre: ")
+
+    while nombre.isdigit():
+        print("El nombre ingresado no es válido. Intente de nuevo")
+        nombre = input("Ingrese su nombre: ")
 
     if nombre in lista_nombres:
         print("Nombre ya registrado")
@@ -192,16 +227,23 @@ def main():
 
         else:
             quit()
-
-        nombre = input("Ingrese su nombre: ")
     
     lista_nombres.append(nombre)
 
-    edad = int(input("Ingrese su edad: "))
+    edad_valida = False
 
-    while edad < 18 or edad > 100:
-        print("Edad no válida")
-        edad = int(input("Ingrese su edad: "))
+    while edad_valida == False:
+        try:
+            edad = int(input("Ingrese su edad: "))
+
+            while edad < 18 or edad > 100:
+                print("Edad no válida")
+                edad = int(input("Ingrese su edad: "))
+
+            edad_valida = True
+            
+        except ValueError:
+            print("El valor ingresado no es válido. Intente de nuevo.")
 
     lista_edades.append(edad)
     
@@ -217,25 +259,28 @@ def main():
 
     valor_de_la_consulta = 0
 
-    print("1. Consulta médica general")
-    print("2. Consulta psicológica")
-    print("3. Consulta de prevención")
-    tipo_de_consulta = int(input("Ingrese el número de algún tipo de consulta mencionada previamente: "))
+    es_el_tipo_de_consulta_valido = False
 
-    match tipo_de_consulta:
-        case 1:
-            lista_tipo_de_consulta.append("Consulta médica general")
-            valor_de_la_consulta = calcular_costo_de_consulta(obra_social, valor_consulta_medica_general)
-            lista_valores_de_consulta.append(valor_de_la_consulta)
-        case 2:
-            lista_tipo_de_consulta.append("Consulta psicológica")
-            valor_de_la_consulta = calcular_costo_de_consulta(obra_social, valor_consulta_psicologica)
-            lista_valores_de_consulta.append(valor_de_la_consulta)
-        case 3:
-            lista_tipo_de_consulta.append("Consulta de prevención")
-            valor_de_la_consulta = calcular_costo_de_consulta(obra_social, valor_consulta_de_prevencion)
-            lista_valores_de_consulta.append(valor_de_la_consulta)
-        
+    while es_el_tipo_de_consulta_valido == False:
+        try:
+            print("1. Consulta médica general")
+            print("2. Consulta psicológica")
+            print("3. Consulta de prevención")
+            tipo_de_consulta = int(input("Ingrese el número de algún tipo de consulta mencionada previamente: "))
+
+            while tipo_de_consulta < 1 or tipo_de_consulta > len(lista_de_tipos_de_consulta_disponibles):
+                print("El valor ingresado no es válido.")
+                print("1. Consulta médica general")
+                print("2. Consulta psicológica")
+                print("3. Consulta de prevención")
+                tipo_de_consulta = int(input("Ingrese el número de algún tipo de consulta mencionada previamente: "))
+            
+            es_el_tipo_de_consulta_valido = True
+
+        except ValueError:
+            print("El valor ingresado no es un un número.")
+
+    buscar_y_asociar_tipo_de_consulta(tipo_de_consulta, obra_social)
 
     mostrar_datos_cargados()
     registrar_paciente()
