@@ -13,7 +13,38 @@ costo_adicional_por_no_tener_obra_social = 10000
 
 lista_de_obras_sociales_disponibles = ["Osde", "Swiss Medical", "Medicus", "Pami", "Dosuba", "Particular"]
 
+
+def ordenar_por_valor_de_consulta(lista_datos_de_pacientes):
+
+    for i in range(len(lista_datos_de_pacientes)):
+        for j in range(0, len(lista_datos_de_pacientes) - i - 1):
+            if lista_datos_de_pacientes[j][4] > lista_datos_de_pacientes[j + 1][4]:
+                lista_datos_de_pacientes[j], lista_datos_de_pacientes[j + 1] = lista_datos_de_pacientes[j + 1], lista_datos_de_pacientes[j]
+
 def mostrar_datos_cargados():
+    lista_datos_de_pacientes = []
+
+    for i in range(len(lista_nombres)):
+        lista_datos_de_pacientes.append((lista_nombres[i], lista_edades[i], lista_obras_sociales[i], lista_tipo_de_consulta[i], lista_valores_de_consulta[i]))
+
+
+    ordenar_por_valor_de_consulta(lista_datos_de_pacientes)
+
+    # Se imprime la lista de todos los pacientes ordenados por valor de consulta (de menor a mayor)
+    print("Lista de pacientes ordenada por orden de consulta: ")
+    for i in range(len(lista_nombres)):
+        print("-------------------------")
+        print("Nombre:", lista_datos_de_pacientes[i][0])
+        print("Edad:", lista_datos_de_pacientes[i][1])
+        print("Obra social:", lista_datos_de_pacientes[i][2])
+        print("Tipo de consulta realizada:", lista_datos_de_pacientes[i][3])
+        print("Costo de la consulta: $", lista_datos_de_pacientes[i][4])
+    
+    print("------------------------------------------------------------------------------------")
+    print()
+
+    # Corroboración de que las listas siguen siendo paralelas
+    print("Corroboración de que las listas siguen siendo paralelas (no ordenadas): ")
     for i in range(len(lista_nombres)):
         print("-------------------------")
         print("Nombre:", lista_nombres[i])
@@ -21,8 +52,9 @@ def mostrar_datos_cargados():
         print("Obra social:", lista_obras_sociales[i])
         print("Tipo de consulta realizada:", lista_tipo_de_consulta[i])
         print("Costo de la consulta: $", lista_valores_de_consulta[i])
-
-
+    
+    print()
+        
 
 def registrar_paciente():
     registrar_otro_paciente = input("¿Quiere registrar otro paciente? Ingrese sí o no: ")
