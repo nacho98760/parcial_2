@@ -21,12 +21,45 @@ def ordenar_por_valor_de_consulta(lista_datos_de_pacientes):
             if lista_datos_de_pacientes[j][4] > lista_datos_de_pacientes[j + 1][4]:
                 lista_datos_de_pacientes[j], lista_datos_de_pacientes[j + 1] = lista_datos_de_pacientes[j + 1], lista_datos_de_pacientes[j]
 
+
 def mostrar_datos_cargados():
+    print("Pacientes registrados: ")
+    for i in range(len(lista_nombres)):
+       print(str(i + 1) + ". " + lista_nombres[i])
+
+    if len(lista_nombres) == 0:
+        print("No hay pacientes registrados.")
+        registrar_paciente()
+
+    numero_valido = False
+    while numero_valido == False:
+        try:
+            numero_de_paciente = int(input("Ingrese el número de paciente del cual quiera saber información: "))
+
+            while numero_de_paciente < 1 or numero_de_paciente > len(lista_nombres):
+                print("Número no válido. Intente de nuevo.")
+                numero_de_paciente = int(input("Ingrese el número de paciente del cual quiera saber información: "))
+
+            numero_valido = True
+            
+        except ValueError:
+            print("El valor ingresado no es válido. Intente de nuevo.")
+
+    print("Nombre: " + lista_nombres[numero_de_paciente - 1])
+    print("Edad: " + str(lista_edades[numero_de_paciente - 1]))
+    print("Obra social: " + lista_obras_sociales[numero_de_paciente - 1])
+    print("Tipo de consulta: " + lista_tipo_de_consulta[numero_de_paciente - 1])
+    print("Valor de la consulta: " + str(lista_valores_de_consulta[numero_de_paciente - 1]))
+
+def mostrar_todos_los_datos():
     lista_datos_de_pacientes = []
 
     for i in range(len(lista_nombres)):
         lista_datos_de_pacientes.append((lista_nombres[i], lista_edades[i], lista_obras_sociales[i], lista_tipo_de_consulta[i], lista_valores_de_consulta[i]))
+    
 
+    if len(lista_datos_de_pacientes) == 0:
+        return
 
     ordenar_por_valor_de_consulta(lista_datos_de_pacientes)
 
@@ -57,14 +90,44 @@ def mostrar_datos_cargados():
         
 
 def registrar_paciente():
-    registrar_otro_paciente = input("¿Quiere registrar otro paciente? Ingrese sí o no: ")
+    registrar_otro_paciente = input("¿Quiere revisar algún otro dato o registrar otro paciente? Ingrese 'Sí' o 'Nó': ")
 
     if registrar_otro_paciente.capitalize() == "Si" or registrar_otro_paciente.capitalize() == "Sí":
         main()
     else:
-        mostrar_datos_cargados()
+        mostrar_todos_los_datos()
         quit()
 
+
+def verificar_tarea():
+    
+    tipo_de_tarea_valida = False
+
+    while tipo_de_tarea_valida == False:
+        try:
+            print("------------------------------")
+            print("1. Iniciar un registro")
+            print("2. Ver registros")
+            tipo_de_tarea = int(input("Elija una de las opciones anteriores: "))
+
+            while tipo_de_tarea < 1 or tipo_de_tarea > 2:
+                print("Número no válido. Intente de nuevo.")
+                print("------------------------------")
+                print("1. Iniciar un registro")
+                print("2. Ver registros")
+                tipo_de_tarea = int(input("Elija una de las opciones anteriores: "))
+
+            match tipo_de_tarea:
+                case 1:
+                    tipo_de_tarea_valida = True
+                    return "Registro"
+                case 2:
+                    tipo_de_tarea_valida = True
+                    return "Ver Registros"
+            
+        except ValueError:
+            print("El valor ingresado no es válido. Intente de nuevo.")
+        
 
 def calcular_costo_de_consulta(obra_social, valor_de_tipo_de_consulta):
 
@@ -205,85 +268,90 @@ def actualizar_datos_del_paciente(nombre, tipo_de_dato_a_actualizar):
 
 def main():
 
-    nombre = input("Ingrese su nombre: ")
+    tipo_de_tarea = verificar_tarea()
 
-    while nombre.isdigit():
-        print("El nombre ingresado no es válido. Intente de nuevo")
+    if tipo_de_tarea == "Registro":
+
         nombre = input("Ingrese su nombre: ")
 
-    if nombre in lista_nombres:
-        print("Nombre ya registrado")
-        actualizar_registro = input("Desea actualizar el registro de este nombre? Indique 'Sí' o 'No': ")
+        while nombre.isdigit() or nombre.strip() == "":
+            print("El nombre ingresado no es válido. Intente de nuevo")
+            nombre = input("Ingrese su nombre: ")
 
-        if actualizar_registro.capitalize() == "Si" or actualizar_registro.capitalize() == "Sí":
+        if nombre in lista_nombres:
+            print("Nombre ya registrado")
+            actualizar_registro = input("Desea actualizar el registro de este nombre? Indique 'Sí' o 'No': ")
+
+            if actualizar_registro.capitalize() == "Si" or actualizar_registro.capitalize() == "Sí":
+            
+                print("1. Nombre")
+                print("2. Edad")
+                print("3. Obra social")
+                print("4. Tipo de consulta")
+                tipo_de_dato_a_actualizar = int(input("Ingrese el número que coincida con el dato que desea actualizar: "))
+
+                actualizar_datos_del_paciente(nombre, tipo_de_dato_a_actualizar)
+
+            else:
+                quit()
         
-            print("1. Nombre")
-            print("2. Edad")
-            print("3. Obra social")
-            print("4. Tipo de consulta")
-            tipo_de_dato_a_actualizar = int(input("Ingrese el número que coincida con el dato que desea actualizar: "))
+        lista_nombres.append(nombre)
 
-            actualizar_datos_del_paciente(nombre, tipo_de_dato_a_actualizar)
+        edad_valida = False
 
-        else:
-            quit()
-    
-    lista_nombres.append(nombre)
-
-    edad_valida = False
-
-    while edad_valida == False:
-        try:
-            edad = int(input("Ingrese su edad: "))
-
-            while edad < 18 or edad > 100:
-                print("Edad no válida")
+        while edad_valida == False:
+            try:
                 edad = int(input("Ingrese su edad: "))
 
-            edad_valida = True
-            
-        except ValueError:
-            print("El valor ingresado no es válido. Intente de nuevo.")
+                while edad < 18 or edad > 100:
+                    print("Edad no válida")
+                    edad = int(input("Ingrese su edad: "))
 
-    lista_edades.append(edad)
-    
-    obra_social = input("Ingrese su obra social (Si no tiene, ingrese 'particular'): ")
-    obra_social = obra_social.capitalize()
+                edad_valida = True
+                
+            except ValueError:
+                print("El valor ingresado no es válido. Intente de nuevo.")
 
-    while obra_social.capitalize() not in lista_de_obras_sociales_disponibles:
-        print("Obra social no disponible.")
+        lista_edades.append(edad)
+        
         obra_social = input("Ingrese su obra social (Si no tiene, ingrese 'particular'): ")
+        obra_social = obra_social.capitalize()
 
-    lista_obras_sociales.append(obra_social.capitalize())
+        while obra_social.capitalize() not in lista_de_obras_sociales_disponibles:
+            print("Obra social no disponible.")
+            obra_social = input("Ingrese su obra social (Si no tiene, ingrese 'particular'): ")
+
+        lista_obras_sociales.append(obra_social.capitalize())
 
 
-    valor_de_la_consulta = 0
+        valor_de_la_consulta = 0
 
-    es_el_tipo_de_consulta_valido = False
+        es_el_tipo_de_consulta_valido = False
 
-    while es_el_tipo_de_consulta_valido == False:
-        try:
-            print("1. Consulta médica general")
-            print("2. Consulta psicológica")
-            print("3. Consulta de prevención")
-            tipo_de_consulta = int(input("Ingrese el número de algún tipo de consulta mencionada previamente: "))
-
-            while tipo_de_consulta < 1 or tipo_de_consulta > len(lista_de_tipos_de_consulta_disponibles):
-                print("El valor ingresado no es válido.")
+        while es_el_tipo_de_consulta_valido == False:
+            try:
                 print("1. Consulta médica general")
                 print("2. Consulta psicológica")
                 print("3. Consulta de prevención")
                 tipo_de_consulta = int(input("Ingrese el número de algún tipo de consulta mencionada previamente: "))
-            
-            es_el_tipo_de_consulta_valido = True
 
-        except ValueError:
-            print("El valor ingresado no es un un número.")
+                while tipo_de_consulta < 1 or tipo_de_consulta > len(lista_de_tipos_de_consulta_disponibles):
+                    print("El valor ingresado no es válido.")
+                    print("1. Consulta médica general")
+                    print("2. Consulta psicológica")
+                    print("3. Consulta de prevención")
+                    tipo_de_consulta = int(input("Ingrese el número de algún tipo de consulta mencionada previamente: "))
+                
+                es_el_tipo_de_consulta_valido = True
 
-    buscar_y_asociar_tipo_de_consulta(tipo_de_consulta, obra_social)
+            except ValueError:
+                print("El valor ingresado no es un un número.")
 
-    mostrar_datos_cargados()
-    registrar_paciente()
+        buscar_y_asociar_tipo_de_consulta(tipo_de_consulta, obra_social)
 
-
+        registrar_paciente()
+    
+    else:
+        mostrar_datos_cargados()
+    
 main()
